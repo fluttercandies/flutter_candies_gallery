@@ -1,4 +1,4 @@
-# flutter_candies
+# flutter_candies_gallery
 
 A new Flutter project.
 
