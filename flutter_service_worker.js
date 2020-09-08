@@ -3,18 +3,19 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "index.html": "a25e34cb9509306e7044f9d4e36402d4",
-"/": "a25e34cb9509306e7044f9d4e36402d4",
-"main.dart.js": "5ff778edd4379645a72949d626a28138",
+  "assets/AssetManifest.json": "0d266ffbe90dae02458487c9d33b7373",
+"assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
+"assets/fonts/MaterialIcons-Regular.otf": "a68d2a28c526b3b070aefca4bac93d25",
+"assets/NOTICES": "08376074b9cabc7889469bbb73d1dad6",
+"assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "115e937bb829a890521f72d2e664b632",
+"assets/packages/flutter_markdown/assets/logo.png": "67642a0b80f3d50277c44cde8f450e50",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
-"manifest.json": "9fdac0a5b3ea0721e6bdc457eaf280e6",
-"assets/AssetManifest.json": "2efbb41d7877d10aac9d091f58ccd7b9",
-"assets/NOTICES": "c999a015bc35b1947e3e56fead116336",
-"assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
-"assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "115e937bb829a890521f72d2e664b632",
-"assets/fonts/MaterialIcons-Regular.otf": "a68d2a28c526b3b070aefca4bac93d25"
+"index.html": "a1d04121fd7d3e9280c7601e8eeeca9e",
+"/": "a1d04121fd7d3e9280c7601e8eeeca9e",
+"main.dart.js": "e9067328c453d53cba62c3d2601a7678",
+"manifest.json": "0fe4fbffab33e5783c82dd1aa5fe7216"
 };
 
 // The application shell files that are downloaded before a service worker can
@@ -26,7 +27,6 @@ const CORE = [
 "assets/NOTICES",
 "assets/AssetManifest.json",
 "assets/FontManifest.json"];
-
 // During install, the TEMP cache is populated with the application shell files.
 self.addEventListener("install", (event) => {
   return event.waitUntil(
@@ -47,7 +47,6 @@ self.addEventListener("activate", function(event) {
       var tempCache = await caches.open(TEMP);
       var manifestCache = await caches.open(MANIFEST);
       var manifest = await manifestCache.match('manifest');
-
       // When there is no prior manifest, clear the entire cache.
       if (!manifest) {
         await caches.delete(CACHE_NAME);
@@ -61,7 +60,6 @@ self.addEventListener("activate", function(event) {
         await manifestCache.put('manifest', new Response(JSON.stringify(RESOURCES)));
         return;
       }
-
       var oldManifest = await manifest.json();
       var origin = self.location.origin;
       for (var request of await contentCache.keys()) {
@@ -136,7 +134,6 @@ self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') {
     return self.skipWaiting();
   }
-
   if (event.message === 'downloadOffline') {
     downloadOffline();
   }
