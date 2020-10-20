@@ -1,11 +1,15 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:flutter_candies_gallery/common/candies_const.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_routes.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_route.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_candies_gallery/route//flutter_candies_gallery_routes.dart'
     as example_routes;
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 @FFRoute(
   name: 'fluttercandies://mainpage',
@@ -34,13 +38,11 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: const Text('flutter_candies_gallery'),
+        title: const Text('FlutterCandies'),
         actions: <Widget>[
           ButtonTheme(
             minWidth: 0.0,
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: FlatButton(
               child: const Text(
                 'Github',
@@ -56,51 +58,111 @@ class MainPage extends StatelessWidget {
               },
             ),
           ),
-          ButtonTheme(
-            padding: const EdgeInsets.only(right: 10.0),
-            minWidth: 0.0,
-            child: FlatButton(
-              child:
-                  Image.network('https://pub.idqqimg.com/wpa/images/group.png'),
-              onPressed: () {
-                launch('https://jq.qq.com/?_wv=1027&k=5bcc0gy');
-              },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ButtonTheme(
+              padding: const EdgeInsets.only(right: 8.0),
+              minWidth: 0.0,
+              child: FlatButton(
+                child: Image.network(
+                    'https://pub.idqqimg.com/wpa/images/group.png'),
+                onPressed: () {
+                  launch('https://jq.qq.com/?_wv=1027&k=5bcc0gy');
+                },
+              ),
             ),
           )
         ],
       ),
-      body: ListView.builder(
-        itemBuilder: (BuildContext c, int index) {
-          // final RouteResult page = routes[index];
-          final String type = routesGroup.keys.toList()[index];
-          return Container(
-              margin: const EdgeInsets.all(20.0),
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      (index + 1).toString() + '.' + type,
-                      //style: TextStyle(inherit: false),
-                    ),
-                    Text(
-                      '$type demos of flutter_candies_gallery',
-                      //page.description,
-                      style: const TextStyle(color: Colors.grey),
-                    )
-                  ],
+      body: Column(
+        children: <Widget>[
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Custom flutter candies(widgets) for you to build flutter app easily, enjoy it.',
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: WaterfallFlow.builder(
+                gridDelegate:
+                    const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 300,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
                 ),
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, Routes.fluttercandiesDemogrouppage,
-                      arguments: <String, dynamic>{
-                        'keyValue': routesGroup.entries.toList()[index],
-                      });
+                itemBuilder: (BuildContext c, int index) {
+                  final CandyChef candyChef = CandyChiefs()[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(
+                          Routes.fluttercandiesCandyChefPage,
+                          arguments: <String, dynamic>{
+                            'candyChef': candyChef,
+                          });
+                    },
+                    child: Card(
+                      elevation: 8,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Hero(
+                                  tag: candyChef.name,
+                                  child: ExtendedImage.asset(
+                                    candyChef.avatar,
+                                    shape: BoxShape.circle,
+                                    width: 80,
+                                    height: 80,
+                                    border: Border.all(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(candyChef.name),
+                            ],
+                          ),
+                          FutureBuilder<String>(
+                            builder: (BuildContext c, AsyncSnapshot<String> d) {
+                              if (!d.hasData) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: Colors.grey[200],
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                            Colors.blue),
+                                  ),
+                                );
+                              }
+
+                              return Markdown(
+                                data: d.data,
+                                shrinkWrap: true,
+                                onTapLink: (String link) {
+                                  launch(link);
+                                },
+                              );
+                            },
+                            future: candyChef.getIntroductionContent(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
-              ));
-        },
-        itemCount: routesGroup.length,
+                itemCount: CandyChiefs().length,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -109,8 +171,6 @@ class MainPage extends StatelessWidget {
 @FFRoute(
   name: 'fluttercandies://demogrouppage',
   routeName: 'DemoGroupPage',
-  argumentNames: <String>['keyValue'],
-  argumentTypes: <String>['List<DemoRouteResult>'],
 )
 class DemoGroupPage extends StatelessWidget {
   DemoGroupPage({MapEntry<String, List<DemoRouteResult>> keyValue})

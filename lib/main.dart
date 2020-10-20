@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'flutter_candies_gallery',
+      title: 'FlutterCandies',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -33,14 +33,7 @@ class MyApp extends StatelessWidget {
         }
         return onGenerateRouteHelper(settings,
             builder: (Widget child, RouteResult result) {
-          if (settings.name == Routes.fluttercandiesMainpage ||
-              settings.name == Routes.fluttercandiesDemogrouppage) {
-            return child;
-          }
-          return CommonWidget(
-            child: child,
-            result: result,
-          );
+          return child;
         });
       },
     );
