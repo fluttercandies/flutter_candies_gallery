@@ -1,7 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:flutter_candies_gallery/common/candies_const.dart';
+import 'package:flutter_candies_gallery/model/candy.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_routes.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_route.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -118,8 +118,8 @@ class MainPage extends StatelessWidget {
                                   child: ExtendedImage.asset(
                                     candyChef.avatar,
                                     shape: BoxShape.circle,
-                                    width: 80,
-                                    height: 80,
+                                    width: 60,
+                                    height: 60,
                                     border: Border.all(
                                       color: Colors.grey.withOpacity(0.5),
                                       width: 1,
@@ -146,8 +146,10 @@ class MainPage extends StatelessWidget {
                               return Markdown(
                                 data: d.data,
                                 shrinkWrap: true,
-                                onTapLink: (String link) {
-                                  launch(link);
+                                physics: const NeverScrollableScrollPhysics(),
+                                onTapLink:
+                                    (String text, String href, String title) {
+                                  launch(href);
                                 },
                               );
                             },

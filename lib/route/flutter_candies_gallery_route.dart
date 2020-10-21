@@ -5,7 +5,7 @@
 
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_candies_gallery/common/candies_const.dart';
+import 'package:flutter_candies_gallery/model/candy.dart';
 import '../pages/article_page.dart';
 import '../pages/candy_chef_page.dart';
 import '../pages/main_page.dart';

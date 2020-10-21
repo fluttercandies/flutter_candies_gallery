@@ -1,19 +1,21 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
+import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:flutter_candies_gallery/common/candies_const.dart';
+import 'package:flutter_candies_gallery/model/candy.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_routes.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:flutter_candies_gallery/common/extension/extension.dart';
 
 @FFRoute(
   name: 'fluttercandies://CandyChefPage',
   routeName: 'CandyChefPage',
   argumentImports: <String>[
-    'import \'package:flutter_candies_gallery/common/candies_const.dart\';'
+    'import \'package:flutter_candies_gallery/model/candy.dart\';'
   ],
 )
 class CandyChefPage extends StatefulWidget {
@@ -57,32 +59,82 @@ class _CandyChefPageState extends State<CandyChefPage> {
         slivers: <Widget>[
           FutureBuilder<String>(
             builder: (BuildContext c, AsyncSnapshot<String> d) {
+              Widget content;
               if (!d.hasData) {
-                return SliverPinnedToBoxAdapter(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.grey[200],
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.blue),
-                    ),
+                content = Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.grey[200],
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
                 );
-              }
-
-              return SliverPinnedToBoxAdapter(
-                child: Material(
+              } else {
+                content = Material(
                   child: Markdown(
                     data: d.data,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    onTapLink: (String link) {
-                      launch(link);
+                    onTapLink: (String text, String href, String title) {
+                      launch(href);
                     },
                   ),
-                ),
-              );
+                );
+              }
+
+              return context.isMobile
+                  ? SliverToBoxAdapter(child: content)
+                  : SliverPinnedToBoxAdapter(child: content);
             },
             future: candyChef.getIntroductionContent(),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8.0),
+            sliver: SliverWaterfallFlow(
+              gridDelegate:
+                  const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  final Candy candy = candyChef.candies[index];
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(candy.name),
+                          FutureBuilder<TextSpan>(
+                            builder:
+                                (BuildContext c, AsyncSnapshot<TextSpan> d) {
+                              if (!d.hasData) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: Colors.grey[200],
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                            Colors.blue),
+                                  ),
+                                );
+                              }
+                              return ExtendedText.rich(
+                                d.data,
+                                selectionEnabled: true,
+                              );
+                            },
+                            future: candy.getDescription(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                childCount: candyChef.candies.length,
+              ),
+            ),
           ),
           SliverPadding(
             padding: const EdgeInsets.all(8.0),
@@ -109,8 +161,7 @@ class _CandyChefPageState extends State<CandyChefPage> {
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text.rich(
                                 TextSpan(
-                                  text:
-                                      '${category.articles.indexOf(article) + 1}. ${article.title}',
+                                  text: article.title,
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       Navigator.of(context).pushNamed(
@@ -135,7 +186,7 @@ class _CandyChefPageState extends State<CandyChefPage> {
                 childCount: candyChef.categories.length,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

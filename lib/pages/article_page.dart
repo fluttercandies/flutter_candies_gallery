@@ -1,15 +1,16 @@
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_candies_gallery/common/candies_const.dart';
+import 'package:flutter_candies_gallery/model/candy.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_candies_gallery/common/extension/extension.dart';
 
 @FFRoute(
   name: 'fluttercandies://ArticlePage',
   routeName: 'ArticlePage',
   argumentImports: <String>[
-    'import \'package:flutter_candies_gallery/common/candies_const.dart\';'
+    'import \'package:flutter_candies_gallery/model/candy.dart\';'
   ],
 )
 class ArticlePage extends StatelessWidget {
@@ -37,15 +38,14 @@ class ArticlePage extends StatelessWidget {
 
           final Widget markdown = Markdown(
             data: d.data,
-            onTapLink: (String link) {
-              launch(link);
+            onTapLink: (String text, String href, String title) {
+              launch(href);
             },
           );
-          final TargetPlatform platform = Theme.of(context).platform;
-          if (platform == TargetPlatform.iOS ||
-              platform == TargetPlatform.android) {
+          if (context.isMobile) {
             return markdown;
           }
+          final TargetPlatform platform = Theme.of(context).platform;
 
           return platform == TargetPlatform.macOS
               ? CupertinoScrollbar(
