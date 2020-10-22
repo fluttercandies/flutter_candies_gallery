@@ -144,8 +144,7 @@ class Candy {
             },
         ),
         TextSpan(
-            text:
-                'published :  $name: ^${DateFormat("yyyy-MM-dd").format(time)}\n\n'),
+            text: 'published : ${DateFormat("yyyy-MM-dd").format(time)}\n\n'),
         if (dart.isNotEmpty) TextSpan(text: '$dart\n\n'),
         if (flutter.isNotEmpty) TextSpan(text: '$flutter\n\n'),
         TextSpan(text: 'usage :  $name: ^${info.latest.version}\n\n'),
