@@ -1,6 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_sliver/extended_sliver.dart';
-import 'package:extended_text/extended_text.dart';
+//import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_gallery/model/candy.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_routes.dart';
@@ -56,6 +56,7 @@ class _CandyChefPageState extends State<CandyChefPage> {
         ),
       ),
       body: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: <Widget>[
           FutureBuilder<String>(
             builder: (BuildContext c, AsyncSnapshot<String> d) {
@@ -107,26 +108,10 @@ class _CandyChefPageState extends State<CandyChefPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(candy.name),
-                          FutureBuilder<TextSpan>(
-                            builder:
-                                (BuildContext c, AsyncSnapshot<TextSpan> d) {
-                              if (!d.hasData) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    backgroundColor: Colors.grey[200],
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                            Colors.blue),
-                                  ),
-                                );
-                              }
-                              return ExtendedText.rich(
-                                d.data,
-                                selectionEnabled: true,
-                              );
-                            },
-                            future: candy.getDescription(),
-                          ),
+                          if (candy.description != null)
+                            SelectableText.rich(
+                              candy.description,
+                            )
                         ],
                       ),
                     ),

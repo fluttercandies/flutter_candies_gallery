@@ -130,31 +130,43 @@ class MainPage extends StatelessWidget {
                               Text(candyChef.name),
                             ],
                           ),
-                          FutureBuilder<String>(
-                            builder: (BuildContext c, AsyncSnapshot<String> d) {
-                              if (!d.hasData) {
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    backgroundColor: Colors.grey[200],
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                            Colors.blue),
-                                  ),
-                                );
-                              }
+                          if (candyChef.content != null)
+                            Markdown(
+                              data: candyChef.content,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              onTapLink:
+                                  (String text, String href, String title) {
+                                launch(href);
+                              },
+                            )
+                          else
+                            FutureBuilder<String>(
+                              builder:
+                                  (BuildContext c, AsyncSnapshot<String> d) {
+                                if (!d.hasData) {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Colors.blue),
+                                    ),
+                                  );
+                                }
 
-                              return Markdown(
-                                data: d.data,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                onTapLink:
-                                    (String text, String href, String title) {
-                                  launch(href);
-                                },
-                              );
-                            },
-                            future: candyChef.getIntroductionContent(),
-                          ),
+                                return Markdown(
+                                  data: d.data,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  onTapLink:
+                                      (String text, String href, String title) {
+                                    launch(href);
+                                  },
+                                );
+                              },
+                              future: candyChef.getIntroductionContent(),
+                            ),
                         ],
                       ),
                     ),

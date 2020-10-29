@@ -26,6 +26,7 @@ class CandyChef {
   final Candies candies;
   String get avatar => 'assets/images/avatars/$name.jpg';
   String _content;
+  String get content => _content;
   Future<String> getIntroductionContent() async {
     await candies?.getCandies();
     return _content ??= await introduction.assetString;
@@ -45,7 +46,9 @@ class Candies extends ListBase<Candy> {
     final List<String> names = list.split('\n');
     for (final String name in names) {
       if (name.isNotEmpty) {
-        add(Candy(name));
+        final Candy candy = Candy(name);
+        await candy.getDescription();
+        add(candy);
       }
     }
 
@@ -74,6 +77,7 @@ class Candy {
   Candy(this.name);
   final String name;
   TextSpan _description;
+  TextSpan get description => _description;
   Future<TextSpan> getDescription() async {
     if (_description == null) {
       final PackageInfo info = await PubApi().getInfo(name);
