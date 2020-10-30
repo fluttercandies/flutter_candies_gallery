@@ -7,6 +7,7 @@ const Map<String, List<String>> candyConsts = <String, List<String>>{
     'assets/CandyChef/zmtzawqlp/Tools/4.Flutter 法法路由注解.md',
     'assets/CandyChef/zmtzawqlp/Tools/6.Flutter 法法注解路由 4.0.md',
     'assets/CandyChef/zmtzawqlp/Tools/3.Flutter JsonToDart 工具.md',
+    'assets/CandyChef/zmtzawqlp/Tools/7.Flutter Assets 生成工具.md',
     'assets/CandyChef/zmtzawqlp/Tools/5.Flutter 法法注解路由 2.0.md',
     'assets/CandyChef/zmtzawqlp/Tools/1.Flutter 功能最全的JsonToDart工具(桌面Web海陆空支持).md',
     'assets/CandyChef/zmtzawqlp/Sliver/1.Flutter Sliver一生之敌 (ScrollView).md',

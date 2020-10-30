@@ -1,22 +1,29 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:flutter_candies_gallery/model/candy.dart';
+
+import 'package:flutter_candies_gallery/pages/home_page.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_routes.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_route.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_candies_gallery/route//flutter_candies_gallery_routes.dart'
     as example_routes;
-import 'package:waterfall_flow/waterfall_flow.dart';
+import 'home_page.dart';
 
 @FFRoute(
   name: 'fluttercandies://mainpage',
   routeName: 'MainPage',
 )
-class MainPage extends StatelessWidget {
-  MainPage() {
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
+  TabController controller;
+  @override
+  void initState() {
     final List<String> routeNames = <String>[];
     routeNames.addAll(example_routes.routeNames);
     routeNames.remove(Routes.fluttercandiesMainpage);
@@ -30,152 +37,108 @@ class MainPage extends StatelessWidget {
               ..sort((DemoRouteResult a, DemoRouteResult b) =>
                   b.group.compareTo(a.group)),
         (DemoRouteResult x) => x.group));
+    controller = TabController(
+      length: 5,
+      vsync: this,
+    );
+    super.initState();
   }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   final Map<String, List<DemoRouteResult>> routesGroup =
       <String, List<DemoRouteResult>>{};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('FlutterCandies'),
-        actions: <Widget>[
-          ButtonTheme(
-            minWidth: 0.0,
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: FlatButton(
-              child: const Text(
-                'Github',
-                style: TextStyle(
-                  decorationStyle: TextDecorationStyle.solid,
-                  decoration: TextDecoration.underline,
-                  color: Colors.white,
-                ),
-              ),
-              onPressed: () {
-                launch(
-                    'https://github.com/fluttercandies/flutter_candies_gallery');
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ButtonTheme(
-              padding: const EdgeInsets.only(right: 8.0),
-              minWidth: 0.0,
-              child: FlatButton(
-                child: Image.network(
-                    'https://pub.idqqimg.com/wpa/images/group.png'),
-                onPressed: () {
-                  launch('https://jq.qq.com/?_wv=1027&k=5bcc0gy');
-                },
-              ),
-            ),
-          )
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('FlutterCandies'),
+      //   actions: <Widget>[
+      //     ButtonTheme(
+      //       minWidth: 0.0,
+      //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      //       child: FlatButton(
+      //         child: const Text(
+      //           'Github',
+      //           style: TextStyle(
+      //             decorationStyle: TextDecorationStyle.solid,
+      //             decoration: TextDecoration.underline,
+      //             color: Colors.white,
+      //           ),
+      //         ),
+      //         onPressed: () {
+      //           launch(
+      //               'https://github.com/fluttercandies/flutter_candies_gallery');
+      //         },
+      //       ),
+      //     ),
+      //     Padding(
+      //       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      //       child: ButtonTheme(
+      //         padding: const EdgeInsets.only(right: 8.0),
+      //         minWidth: 0.0,
+      //         child: FlatButton(
+      //           child: Image.network(
+      //               'https://pub.idqqimg.com/wpa/images/group.png'),
+      //           onPressed: () {
+      //             launch('https://jq.qq.com/?_wv=1027&k=5bcc0gy');
+      //           },
+      //         ),
+      //       ),
+      //     )
+      //   ],
+      // ),
       body: Column(
         children: <Widget>[
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Custom flutter candies(widgets) for you to build flutter app easily, enjoy it.',
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  'assets/images/avatars/flutter_candies_logo.png',
+                  width: 60,
+                  height: 60,
+                ),
               ),
-            ),
+            ],
+          ),
+          TabBar(
+            controller: controller,
+            tabs: const <Widget>[
+              Tab(
+                text: 'Home',
+              ),
+              Tab(
+                text: 'Candy',
+              ),
+              Tab(
+                text: 'Github',
+              ),
+              Tab(
+                text: 'Blog',
+              ),
+              Tab(
+                text: 'About',
+              ),
+            ],
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: WaterfallFlow.builder(
-                gridDelegate:
-                    const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 300,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                ),
-                itemBuilder: (BuildContext c, int index) {
-                  final CandyChef candyChef = CandyChiefs()[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
-                          Routes.fluttercandiesCandyChefPage,
-                          arguments: <String, dynamic>{
-                            'candyChef': candyChef,
-                          });
-                    },
-                    child: Card(
-                      elevation: 8,
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Hero(
-                                  tag: candyChef.name,
-                                  child: ExtendedImage.asset(
-                                    candyChef.avatar,
-                                    shape: BoxShape.circle,
-                                    width: 60,
-                                    height: 60,
-                                    border: Border.all(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      width: 1,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Text(candyChef.name),
-                            ],
-                          ),
-                          if (candyChef.content != null)
-                            Markdown(
-                              data: candyChef.content,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              onTapLink:
-                                  (String text, String href, String title) {
-                                launch(href);
-                              },
-                            )
-                          else
-                            FutureBuilder<String>(
-                              builder:
-                                  (BuildContext c, AsyncSnapshot<String> d) {
-                                if (!d.hasData) {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      backgroundColor: Colors.grey[200],
-                                      valueColor:
-                                          const AlwaysStoppedAnimation<Color>(
-                                              Colors.blue),
-                                    ),
-                                  );
-                                }
-
-                                return Markdown(
-                                  data: d.data,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  onTapLink:
-                                      (String text, String href, String title) {
-                                    launch(href);
-                                  },
-                                );
-                              },
-                              future: candyChef.getIntroductionContent(),
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                itemCount: CandyChiefs().length,
-              ),
+            child: TabBarView(
+              controller: controller,
+              children: <Widget>[
+                HomePage(),
+                Container(child: const Text('Candy')),
+                Container(child: const Text('Github')),
+                Container(child: const Text('Blog')),
+                Container(child: const Text('About')),
+              ],
             ),
-          )
+          ),
         ],
       ),
     );

@@ -1,15 +1,13 @@
 import 'package:extended_image/extended_image.dart';
-import 'package:extended_sliver/extended_sliver.dart';
 //import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_gallery/model/candy.dart';
 import 'package:flutter_candies_gallery/route/flutter_candies_gallery_routes.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-import 'package:flutter_candies_gallery/common/extension/extension.dart';
 
 @FFRoute(
   name: 'fluttercandies://CandyChefPage',
@@ -70,23 +68,22 @@ class _CandyChefPageState extends State<CandyChefPage> {
                   ),
                 );
               } else {
-                content = Material(
-                  child: Markdown(
-                    data: d.data,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onTapLink: (String text, String href, String title) {
-                      launch(href);
-                    },
-                  ),
+                content = MarkdownWidget(
+                  data: d.data,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  styleConfig: StyleConfig(pConfig: PConfig(
+                      //linkStyle: TextStyle(...),
+                      onLinkTap: (String url) {
+                    launch(url);
+                  })),
                 );
               }
 
-              return context.isMobile
-                  ? SliverToBoxAdapter(child: content)
-                  : SliverPinnedToBoxAdapter(child: content);
+              return SliverToBoxAdapter(child: content);
             },
             future: candyChef.getIntroductionContent(),
+            initialData: candyChef.content,
           ),
           SliverPadding(
             padding: const EdgeInsets.all(8.0),
@@ -108,10 +105,27 @@ class _CandyChefPageState extends State<CandyChefPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(candy.name),
-                          if (candy.description != null)
-                            SelectableText.rich(
-                              candy.description,
-                            )
+                          FutureBuilder<TextSpan>(
+                            builder:
+                                (BuildContext c, AsyncSnapshot<TextSpan> d) {
+                              if (!d.hasData) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: Colors.grey[200],
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                            Colors.blue),
+                                  ),
+                                );
+                              }
+                              return SelectableText.rich(
+                                d.data,
+                                //selectionEnabled: true,
+                              );
+                            },
+                            future: candy.getDescription(),
+                            initialData: candy.description,
+                          ),
                         ],
                       ),
                     ),

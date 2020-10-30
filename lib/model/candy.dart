@@ -46,9 +46,7 @@ class Candies extends ListBase<Candy> {
     final List<String> names = list.split('\n');
     for (final String name in names) {
       if (name.isNotEmpty) {
-        final Candy candy = Candy(name);
-        await candy.getDescription();
-        add(candy);
+        add(Candy(name));
       }
     }
 
@@ -181,6 +179,7 @@ class Article {
   final String title;
   final String md;
   String _content;
+  String get content => _content;
   Future<String> getContent() async {
     return _content ??= await md.assetString;
   }
