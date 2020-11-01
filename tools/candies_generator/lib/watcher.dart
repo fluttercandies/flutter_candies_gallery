@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:io/ansi.dart';
+
 typedef AssetsChanged = void Function();
 
 class Watcher {
@@ -23,10 +25,43 @@ class Watcher {
       return file.watch().listen((FileSystemEvent data) {
         if (data.isDirectory) {
           final Directory directory = Directory(data.path);
-          _watch(directory);
-          dirList.add(directory);
-        } else {
-          print('\n${data.path} is changed.\n');
+
+          if (data.type == FileSystemEvent.delete) {
+            if (watchMap.containsKey(directory)) {
+              watchMap[watchMap].cancel();
+            }
+            dirList.remove(directory);
+          }
+          //empty directory
+          else if (directory.listSync().isEmpty) {
+            return;
+          }
+          //watch new directory
+          else {
+            _watch(directory);
+            dirList.add(directory);
+          }
+        }
+        String msg;
+        switch (data.type) {
+          case FileSystemEvent.create:
+            msg = green.wrap('create');
+            break;
+          case FileSystemEvent.delete:
+            msg = red.wrap('delete');
+            break;
+          case FileSystemEvent.move:
+            msg = yellow.wrap('move');
+            break;
+          case FileSystemEvent.modify:
+            break;
+          case FileSystemEvent.all:
+            msg = yellow.wrap('operate');
+            break;
+          default:
+        }
+        if (msg != null) {
+          print('\n$msg ${data.path}.\n');
           assetsChanged?.call();
         }
       });
@@ -48,7 +83,8 @@ class Watcher {
       watchMap[dir] = sub;
     }
 
-    print('watching your assets now !');
+    print('watching ${dirList.first.path} !\n');
+    //print('For a more detailed help message, press "-h". To quit, press "-q".');
   }
 
   void stopWatch() {

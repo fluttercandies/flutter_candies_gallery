@@ -1,6 +1,6 @@
 const Map<String, List<String>> candyConsts = <String, List<String>>{
   'zmtzawqlp': <String>[
-    'assets/CandyChef/zmtzawqlp/candies.md',
+    'assets/CandyChef/zmtzawqlp/candies',
     'assets/CandyChef/zmtzawqlp/PullPush/2.Flutter 轻松构建加载更多(loading more).md',
     'assets/CandyChef/zmtzawqlp/PullPush/1.Flutter 下拉刷新花式玩法.md',
     'assets/CandyChef/zmtzawqlp/Tools/2.Flutter JsonToDart Mac版 lei了，真的不mark吗.md',

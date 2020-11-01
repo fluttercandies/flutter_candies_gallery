@@ -1,0 +1,1 @@
+-s --const-ignore .md|avatars -o lib/common

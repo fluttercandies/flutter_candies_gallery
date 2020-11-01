@@ -2,12 +2,13 @@ import 'dart:io';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart';
 
-void mdGo() {
+List<Directory> mdGo() {
   //print(green.wrap('find markdown : '));
   final Directory directory = Directory('assets/CandyChef/');
 
   final Map<String, List<String>> mds = <String, List<String>>{};
-  getList(directory, mds);
+    final List<Directory> dirList = <Directory>[];
+  getList(directory, mds,dirList);
 
   final File file = File('lib/common/candies_const.dart');
   if (!file.existsSync()) {
@@ -28,12 +29,15 @@ void mdGo() {
   sb.write('};');
 
   file.writeAsStringSync(DartFormatter().format(sb.toString()));
+  return dirList;
 }
 
 void getList(
   Directory directory,
   Map<String, List<String>> mds,
+   List<Directory> dirList,
 ) {
+  dirList.add(directory);
   for (final FileSystemEntity item in directory.listSync()) {
     final FileStat fileStat = item.statSync();
     if (fileStat.type == FileSystemEntityType.directory) {
@@ -43,6 +47,7 @@ void getList(
       getList(
         Directory(item.path),
         mds,
+        dirList,
       );
     } else if (fileStat.type == FileSystemEntityType.file) {
       for (final String key in mds.keys) {

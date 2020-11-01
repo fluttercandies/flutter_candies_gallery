@@ -100,11 +100,12 @@ class _MainPageState extends State<MainPage>
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
-                  'assets/images/avatars/flutter_candies_logo.png',
+                  'assets/images/flutter_candies_logo.png',
                   width: 60,
                   height: 60,
                 ),
               ),
+              const Text('🍦🍧🍨🍮🍯🍩🍪🎂🍰🍫🍬🍭'),
             ],
           ),
           TabBar(

@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:candies_generator/assets_generator.dart';
 import 'package:candies_generator/candy_chef_generator.dart';
 import 'package:candies_generator/watcher.dart';
 
@@ -13,7 +11,7 @@ void main(List<String> arguments) {
 }
 
 List<Directory> go() {
-  mdGo();
-  print('');
-  return assetsGo();
+  return mdGo();
+  // print('');
+  // return assetsGo();
 }
